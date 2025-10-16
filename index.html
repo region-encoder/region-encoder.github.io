@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="REN: Fast and Efficient Region Encodings from Patch-Based Image Encoders.">
+  <meta property="og:title" content="REN: Fast and Efficient Region Encodings from Patch-Based Image Encoders" />
+  <meta property="og:description"
+    content="A lightweight model for extracting semantically meaningful region-level representations from images using point prompts.">
+  <meta property="og:url" content="https://arxiv.org/abs/2505.18153" />
+  <meta property="og:image" content="static/images/REN_teaser.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:title" content="REN: Fast and Efficient Region Encodings from Patch-Based Image Encoders">
+  <meta name="twitter:description" content="A lightweight model for extracting semantically meaningful region-level representations from images using point prompts.">
+  <meta name="twitter:image" content="static/images/REN_teaser.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="keywords"
+    content="computer vision, region-based representations, segmentation, retrieval">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>REN: Fast and Efficient Region Encodings from Patch-Based Image Encoders</title>
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+
+  <style>
+    .uniform-gif {
+      width: 250px;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .small-icon {
+      width: 55px;
+      height: 55px;
+      object-fit: contain;
+      margin-bottom: 0.5em;
+    }
+
+    .large-icon {
+      width: 450px;
+      height: 250px;
+      object-fit: contain;
+      margin-bottom: 0.5em;
+    }
+
+    .stacked {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">REN: Fast and Efficient Region Encodings from Patch-Based Image Encoders</h1>
+            <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://savya08.github.io/" target="_blank"><b>Savya Khosla</b></a>,
+              <a href="mailto:st34@illinois.edu" target="_blank"><b>Sethuraman T V</b></a>,
+              <a href="https://barnettlee.com/" target="_blank"><b>Barnett Lee</b></a>,
+              <a href="https://alexander-schwing.de/" target="_blank"><b>Alexander Schwing</b></a>,
+              <a href="https://dhoiem.cs.illinois.edu/" target="_blank"><b>Derek Hoiem</b></a>
+            </span><br>
+            <span class="author-block" style="color: #35414f;">University of Illinois Urbana-Champaign</span><br>
+            <span class="author-block"><small>{savyak2, st34, bl29, aschwing, dhoiem}@illinois.edu</small></span>
+          </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="https://arxiv.org/pdf/2505.18153" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="https://github.com/savya08/REN/tree/main/" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Teaser -->
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body has-text-centered">
+
+        <div class="content">
+          <p>
+            <b>Representing images using region-based representations from REN (instead of conventional patch-based ones) 
+            improves performance across multiple tasks, while resulting in compact and content-aware representations.</b>
+          </p>
+        </div>
+
+        <br>
+  
+        <div class="columns is-centered is-vcentered">
+          <div class="column is-narrow">
+            <div class="stacked">
+              <img src="figures/teaser.png" class="large-icon" alt="Performance vs. Token Count">
+            </div>
+          </div>
+        </div>
+        
+        <div class="content">
+          <p>
+            Performance vs. token count: REN matches the performance of the original image encoder 
+            (DINOv2), which uses 1369 tokens/image, with just 41 tokens/image, and surpasses it beyond
+            that point. Performance stabilizes at 70 tokens/image. NTA denotes no token aggregation, 
+            i.e., 1369 tokens/image.
+          </p>
+        </div>
+  
+      </div>
+    </div>
+  </section>
+
+  <!-- Paper abstract -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h3 class="title is-3">Abstract</h3>
+          <div class="content has-text-justified">
+            <p>
+              We introduce the <b>Region Encoder Network (REN)</b>, a fast and effective model for generating 
+              region-based image representations using point prompts. Recent methods combine class-agnostic 
+              segmenters (e.g., SAM) with patch-based image encoders (e.g., DINO) to produce compact and 
+              effective region representations, but they suffer from high computational cost due to the 
+              segmentation step. REN bypasses this bottleneck using a lightweight module that directly 
+              generates region tokens, enabling <b>60x faster token generation</b> with <b>35x less memory</b>, 
+              while also <b>improving token quality</b>. It uses a few cross-attention blocks that take 
+              point prompts as queries and features from a patch-based image encoder as keys and values to 
+              produce region tokens that correspond to the prompted objects. We train REN with three popular 
+              encoders—DINO, DINOv2, and OpenCLIP—and show that it can be extended to other encoders without 
+              dedicated training. We evaluate REN on semantic segmentation and retrieval tasks, where it 
+              consistently outperforms the original encoders in both performance and compactness, and matches 
+              or exceeds SAM-based region methods while being significantly faster. Notably, REN achieves 
+              state-of-the-art results on the challenging Ego4D VQ2D benchmark and outperforms proprietary 
+              LMMs on Visual Haystacks' single-needle challenge.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Method -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <h2 class="title is-3">Method Overview</h2>
+          <div class="content">
+            <p>
+              Point prompts interact with patch-based features through cross-attention blocks to produce region 
+              tokens. The training objective combines two components: (1) a contrastive loss that aligns region 
+              tokens with those generated from an augmented view of the same image, and (2) a feature similarity 
+              loss that aligns a linear projection of these tokens with average-pooled patch features obtained 
+              using SAM masks. REN eliminates the need for explicit segmentation at inference time while 
+              producing efficient and semantically rich region representations. We also show thresholded attention 
+              maps for three query points inside the cross-attention block, which show that the model learns to 
+              aggregate features primarily from the regions marked by the corresponding point prompts.
+              <br><br>
+            </p>
+          </div>
+          <img src="figures/overview.png" alt="REN Overview" class="center" style="width: 800px;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <h2 class="title is-3">Tasks & Results</h2>
+          <p>
+            <br>
+          </p>
+
+          <div class="content">
+            <details open>
+              <summary style="cursor: pointer; font-weight: bold; font-size: 1.1em; margin-bottom: 1em;">
+                Visual Query Localization
+              </summary>
+
+              <p>
+                REN can effectively localizes visual queries in long videos despite challenges like clutter, occlusions,
+                background blending, motion blur, viewpoint changes, and brief visibility. On the Ego4D VQ2D benchmark, 
+                REN outperforms all existing approaches, including those specifically developed for this benchmark. 
+              </p>
+
+              <br>
+
+              <div class="columns is-centered is-vcentered">
+                <div class="column is-narrow">
+                  <div class="stacked">
+                    <img src="figures/vq4.png" class="small-icon" alt="Query 1">
+                    <img src="figures/ex4.gif" class="uniform-gif" alt="Example 1">
+                  </div>
+                </div>
+                <div class="column is-narrow">
+                  <div class="stacked">
+                    <img src="figures/vq1.png" class="small-icon" alt="Query 2">
+                    <img src="figures/ex1.gif" class="uniform-gif" alt="Example 2">
+                  </div>
+                </div>
+                <div class="column is-narrow">
+                  <div class="stacked">
+                    <img src="figures/vq3.png" class="small-icon" alt="Query 3">
+                    <img src="figures/ex3.gif" class="uniform-gif" alt="Example 3">
+                  </div>
+                </div>
+              </div>
+        
+              <div class="columns is-centered is-vcentered">
+                <div class="column is-narrow">
+                  <div class="stacked">
+                    <img src="figures/vq2.png" class="small-icon" alt="Query 4">
+                    <img src="figures/ex2.gif" class="uniform-gif" alt="Example 4">
+                  </div>
+                </div>
+                <div class="column is-narrow">
+                  <div class="stacked">
+                    <img src="figures/vq5.png" class="small-icon" alt="Query 5">
+                    <img src="figures/ex5.gif" class="uniform-gif" alt="Example 5">
+                  </div>
+                </div>
+              </div>
+
+              <br>
+
+              <table cellspacing="0" cellpadding="4">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>stAP</th>
+                    <th>tAP</th>
+                    <th>Success</th>
+                    <th>Recovery</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>SiamRCNN</td><td>0.13</td><td>0.21</td><td>41.6</td><td>34.0</td></tr>
+                  <tr><td>CocoFormer</td><td>0.18</td><td>0.26</td><td>48.1</td><td>43.2</td></tr>
+                  <tr><td>VQLoC</td><td>0.24</td><td>0.32</td><td>55.9</td><td>45.1</td></tr>
+                  <tr><td>HERO-VQL</td><td>0.28</td><td>0.37</td><td>60.7</td><td>45.3</td></tr>
+                  <tr><td>PRVQL</td><td>0.28</td><td>0.37</td><td>59.4</td><td>45.7</td></tr>
+                  <tr><td>RELOCATE</td><td>0.35</td><td>0.43</td><td>60.1</td><td><strong>50.6</strong></td></tr>
+                  <tr style="background-color: #dff1f5;"><td><strong>REN</strong></td><td><strong>0.40</strong></td><td><strong>0.52</strong></td><td><strong>61.2</strong></td><td>49.3</td></tr>
+                </tbody>
+              </table>
+              <br>
+            </details>
+          </div>
+
+          <div class="content">
+            <details>
+              <summary style="cursor: pointer; font-weight: bold; font-size: 1.1em; margin-bottom: 1em;">
+                Semantic Segmentation
+              </summary>
+
+              <p>
+                REN improves semantic segmentation performance across different image encoders. Its region tokens 
+                produce cleaner and less noisy predictions compared to the patch-based features used in DINOv2.
+              </p>
+
+              <br>
+
+              <div class="columns is-centered is-vcentered">
+                <div class="column is-narrow">
+                  <div class="stacked">
+                    <img src="figures/segmentation.png" alt="Semantic Segmentation"  class="center" style="width: 950px;">
+                  </div>
+                </div>
+              </div>
+
+              <br>
+
+              <table cellspacing="0" cellpadding="4">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>VOC2012</th>
+                    <th>ADE20K</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>DINOv2</td><td>82.1</td><td>47.7</td></tr>
+                  <tr style="background-color: #dff1f5;"><td><strong>REN-DINOv2</strong></td><td><strong>86.5</strong></td><td><strong>50.9</strong></td></tr>
+                  <tr><td>DINO</td><td>66.4</td><td>31.8</td></tr>
+                  <tr style="background-color: #dff1f5;"><td><strong>REN-DINO</strong></td><td><strong>71.4</strong></td><td><strong>35.1</strong></td></tr>
+                  <tr><td>OpenCLIP</td><td>71.4</td><td>39.3</td></tr>
+                  <tr style="background-color: #dff1f5;"><td><strong>REN-OpenCLIP</strong></td><td><strong>78.0</strong></td><td><strong>42.8</strong></td></tr>
+                </tbody>
+              </table>
+              
+              <br>
+
+            </details>
+          </div>
+
+          <div class="content">
+            <details>
+              <summary style="cursor: pointer; font-weight: bold; font-size: 1.1em; margin-bottom: 1em;">
+                Finding Needle in a Haystack
+              </summary>
+
+              <p>
+                On the Visual Haystacks' single-needle challenge, REN outperforms proprietary LMMs, open-source 
+                LMMs, and RAG-based methods, especially for larger number of input images (denoted by N). 
+                "E" indicates context overflow, execution failure, or API error.
+              </p>
+
+              <table cellspacing="0" cellpadding="4">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>N=1</th>
+                    <th>N=2</th>
+                    <th>N=3</th>
+                    <th>N=5</th>
+                    <th>N=10</th>
+                    <th>N=20</th>
+                    <th>N=50</th>
+                    <th>N=100</th>
+                    <th>N=500</th>
+                    <th>N=1K</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Gemini 1.5 Pro</td><td><strong>88.4</strong></td><td><strong>82.0</strong></td><td><strong>78.3</strong></td><td><strong>76.0</strong></td><td>71.9</td><td>68.6</td><td>62.8</td><td>57.4</td><td>E</td><td>E</td></tr>
+                  <tr><td>GPT-4o</td><td>82.5</td><td>79.9</td><td>77.5</td><td>73.3</td><td>68.2</td><td>65.4</td><td>59.7</td><td>55.3</td><td>E</td><td>E</td></tr>
+                  <tr><td>LongVILA</td><td>63.8</td><td>59.0</td><td>57.7</td><td>56.7</td><td>55.6</td><td>52.0</td><td>52.0</td><td>52.0</td><td>E</td><td>E</td></tr>
+                  <tr><td>Qwen2-VL</td><td>80.9</td><td>76.6</td><td>73.6</td><td>67.9</td><td>62.6</td><td>59.1</td><td>52.6</td><td>E</td><td>E</td><td>E</td></tr>
+                  <tr><td>Phi-3</td><td>80.5</td><td>69.1</td><td>67.3</td><td>62.0</td><td>54.8</td><td>52.6</td><td>50.8</td><td>E</td><td>E</td><td>E</td></tr>
+                  <tr><td>InternVL2</td><td>88.1</td><td>80.5</td><td>72.3</td><td>63.9</td><td>58.8</td><td>55.2</td><td>E</td><td>E</td><td>E</td><td>E</td></tr>
+                  <tr><td>mPLUG-OWL3</td><td>84.4</td><td>66.0</td><td>62.1</td><td>57.0</td><td>53.2</td><td>51.5</td><td>E</td><td>E</td><td>E</td><td>E</td></tr>
+                  <tr><td>LLaVA-v1.5</td><td>85.8</td><td>77.1</td><td>75.8</td><td>68.6</td><td>63.6</td><td>60.4</td><td>55.3</td><td>57.5</td><td>55.4</td><td>52.9</td></tr>
+                  <tr><td>MIRAGE</td><td>83.2</td><td>77.8</td><td>76.6</td><td>72.8</td><td>70.5</td><td>66.0</td><td>63.6</td><td>62.0</td><td>58.7</td><td>55.7</td></tr>
+                  <tr><td>SigLIP 2</td><td>72.0</td><td>69.2</td><td>68.1</td><td>65.3</td><td>64.1</td><td>60.3</td><td>58.7</td><td>58.3</td><td>56.6</td><td>54.9</td></tr>
+                  <tr style="background-color: #dff1f5;"><td><strong>REN</strong></td><td>81.2</td><td>78.6</td><td>77.4</td><td><strong>76.0</strong></td><td><strong>74.0</strong></td><td><strong>72.1</strong></td><td><strong>68.3</strong></td><td><strong>65.5</strong></td><td><strong>62.3</strong></td><td><strong>59.2</strong></td></tr>
+                </tbody>
+              </table>
+              
+
+            </details>
+          </div>
+
+          <div class="content">
+            <details>
+              <summary style="cursor: pointer; font-weight: bold; font-size: 1.1em; margin-bottom: 1em;">
+                Single-Shot Object-Based Image Retrieval
+              </summary>
+
+              <p>
+                Region-based methods outperform the patch-based baseline, and REN further surpasses the 
+                SAM-based baseline while offering faster and more efficient region token generation.
+              </p>
+
+              <div class="columns is-centered is-vcentered">
+                <div class="column is-narrow">
+                  <div class="stacked">
+                    <img src="figures/retrieval.png" alt="Retrieval"  class="center" style="width: 550px;">
+                  </div>
+                </div>
+              </div>
+
+              <table cellspacing="0" cellpadding="4" style="border-collapse: collapse; width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>mAP</th>
+                    <th>mRP@50</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>DINOv2</td><td>0.13</td><td>0.33</td></tr>
+                  <tr><td>SAM-DINOv2</td><td>0.45</td><td>0.58</td></tr>
+                  <tr style="background-color: #dff1f5;"><td><strong>REN</strong></td><td><strong>0.52</strong></td><td><strong>0.65</strong></td></tr>
+                </tbody>
+              </table>
+
+            </details>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video Tutorial -->
+  <!-- <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <h2 class="title is-3">Video Tutorial</h2>
+          <div class="content">
+            <video class="center" width="100%" controls>
+              <source src="figures/tutorial.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- BibTex citation -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content is-dark">
+      <h2 class="title is-3">BibTex</h2>
+      <pre><code>@inproceedings{khosla2025ren,
+    title={REN: Fast and Efficient Region Encodings from Patch-Based Image Encoders},
+    author={Savya Khosla and Sethuraman T V and Barnett Lee and Alexander Schwing and Derek Hoiem},
+    journal={Neural Information Processing Systems},
+    year={2025}
+}</code></pre>
+    </div>
+  </section>
+</body>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</html>
